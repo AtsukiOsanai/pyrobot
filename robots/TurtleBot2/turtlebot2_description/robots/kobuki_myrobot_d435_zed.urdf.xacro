@@ -17,7 +17,7 @@
   <xacro:sensor_d435 parent="plate_top1_front_link">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:sensor_d435>
-  <xacro:sensor_zed parent="plate_top2_front_link" camera_name="zed" camera_model="zed">
+  <xacro:sensor_zed parent="plate_top2_front_link" camera_name="zed2" camera_model="zed2">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:sensor_zed>
 </robot>

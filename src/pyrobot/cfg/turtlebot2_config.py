@@ -32,7 +32,7 @@ _CAMERAC.ROSTOPIC_CAMERA_DEPTH_STREAM = '/camera/depth/image_raw'
 
 _BASEC = _C.BASE
 # BASE class name
-_BASEC.CLASS = 'LoCoBotBase'
+_BASEC.CLASS = 'TurtleBot2Base'
 # Type of base being used 'kobuki' or 'create'
 _BASEC.BASE_TYPE = 'kobuki'
 # Type of contrller being used for postion control

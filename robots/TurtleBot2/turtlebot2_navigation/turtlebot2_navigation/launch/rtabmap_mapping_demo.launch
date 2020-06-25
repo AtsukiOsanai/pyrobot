@@ -35,13 +35,14 @@
   <arg     if="$(arg localization)" name="args"  default=""/>
   <arg unless="$(arg localization)" name="args"  default="--delete_db_on_start"/>
 
-  <arg     if="$(arg simulation)" name="rgb_topic"   default="/camera/rgb/image_raw"/>
+  <arg     if="$(arg simulation)" name="rgb_topic"   default="/zed2/rgb/image_rect_raw"/>
   <arg unless="$(arg simulation)" name="rgb_topic"   default="/camera/rgb/image_rect_color"/>
-  <arg     if="$(arg simulation)" name="depth_topic" default="/camera/depth/image_raw"/>
+  <arg     if="$(arg simulation)" name="depth_topic" default="/zed2/depth/depth_registered"/>
   <arg unless="$(arg simulation)" name="depth_topic" default="/camera/depth_registered/image_raw"/>
-  <arg     if="$(arg simulation)" name="cloud_topic"   default="/zed/point_cloud/cloud_registered"/>
+  <arg     if="$(arg simulation)" name="cloud_topic"   default="/zed2/point_cloud/cloud_registered"/>
   <arg unless="$(arg simulation)" name="cloud_topic"   default="/camera/depth/points"/>
-  <arg name="camera_info_topic" default="/camera/rgb/camera_info"/>
+  <arg     if="$(arg simulation)" name="camera_info_topic"   default="/zed2/rgb/camera_info"/>
+  <arg unless="$(arg simulation)" name="camera_info_topic"   default="/camera/rgb/camera_info"/>
   
   <arg name="wait_for_transform"  default="0.2"/> 
   <!-- 

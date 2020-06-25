@@ -27,111 +27,10 @@ except:
 from pyrobot.core import Base
 from std_msgs.msg import Empty
 
-from pyrobot.turtlebot2.base_control_utils import MoveBasePlanner, _get_absolute_pose
-from pyrobot.turtlebot2.base_controllers import ProportionalControl, ILQRControl, MoveBaseControl
-from pyrobot.turtlebot2.bicycle_model import wrap_theta
-
-
-class BaseSafetyCallbacks(object):
-    """
-    This class encapsulates and provides interface to bumper, cliff and
-    wheeldrop sensors on the base.  It all also trigers necessary callbacks
-    when these sensors get tripped.
-    """
-
-    def __init__(self, base):
-        self.should_stop = False
-        self.bumper = False
-        self.cliff = False
-        self.wheel_drop = False
-        self.subscribers = []
-
-        if base == 'create':
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_BUMPER, Bumper,
-                                 self.bumper_callback_create)
-            self.subscribers.append(s)
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_CLIFF, Empty,
-                                 self.cliff_callback)
-            self.subscribers.append(s)
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_WHEELDROP, Empty,
-                                 self.wheeldrop_callback)
-            self.subscribers.append(s)
-        else:
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_BUMPER,
-                                 BumperEvent, self.bumper_callback_kobuki)
-            self.subscribers.append(s)
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_CLIFF,
-                                 CliffEvent, self.cliff_callback)
-            self.subscribers.append(s)
-            s = rospy.Subscriber(self.configs.BASE.ROSTOPIC_WHEELDROP,
-                                 WheelDropEvent, self.wheeldrop_callback)
-            self.subscribers.append(s)
-
-    def bumper_callback_create(self, data):
-        bumped = data.is_left_pressed or data.is_right_pressed
-        to_bump = data.is_light_left or data.is_light_center_left or \
-                  data.is_light_center_right or data.is_light_front_right or \
-                  data.is_light_right
-        if bumped or to_bump:
-            if self.bumper is False:
-                rospy.loginfo("Bumper Detected")
-            self.should_stop = True
-            self.bumper = True
-        else:
-            self.bumper = False
-
-    def cliff_callback(self, data):
-        rospy.loginfo("Cliff Detected")
-        self.should_stop = True
-        self.cliff = True
-
-    def wheeldrop_callback(self, data):
-        rospy.loginfo("Drop the contact")
-        self.should_stop = True
-        self.wheel_drop = True
-
-    def bumper_callback_kobuki(self, date):
-        rospy.loginfo("Bumper Detected")
-        self.bumper = True
-        self.should_stop = True
-
-    def __del__(self):
-        # Delete callback on deletion of object.
-        for s in self.subscribers:
-            s.unregister()
-
-
-class XYTState(object):
-    """
-    This class object which can be used used to hold the pose of the base of
-    the robot i.e, (x,y, yaw)
-    """
-
-    def __init__(self):
-        self.x = 0.
-        self.y = 0.
-        self.theta = 0.
-        self.old_theta = 0
-        self._state_f = np.array([self.x, self.y, self.theta],
-                                 dtype=np.float32).T
-        self.update_called = False
-
-    def update(self, x, y, theta):
-        """Updates the state being stored by the object."""
-        theta = wrap_theta(theta - self.old_theta) + self.old_theta
-        self.old_theta = theta
-        self.theta = theta
-        self.x = x
-        self.y = y
-        self._state_f = np.array([self.x, self.y, self.theta],
-                                 dtype=np.float32).T
-        self.update_called = True
-
-    @property
-    def state_f(self):
-        """Returns the current state as a numpy array."""
-        assert (self.update_called), "Odometry callback hasn't been called."
-        return self._state_f
+from pyrobot.locobot.base_control_utils import MoveBasePlanner, _get_absolute_pose
+from pyrobot.locobot.base_controllers import ProportionalControl, ILQRControl, MoveBaseControl
+from pyrobot.locobot.bicycle_model import wrap_theta
+from pyrobot.locobot.base import BaseSafetyCallbacks, XYTState
 
 
 class BaseState(BaseSafetyCallbacks):
@@ -140,6 +39,7 @@ class BaseState(BaseSafetyCallbacks):
         self.configs = configs
         self.build_map = build_map
         if self.build_map:
+            """
             assert (USE_ORB_SLAM2), 'Error: Failed to import orb_slam2_ros'
             self.vslam = VisualSLAM(
                 map_img_dir=map_img_dir,
@@ -150,6 +50,7 @@ class BaseState(BaseSafetyCallbacks):
                 occ_map_rate=self.configs.BASE.VSLAM.OCCUPANCY_MAP_RATE,
                 z_min=self.configs.BASE.Z_MIN_TRESHOLD_OCC_MAP,
                 z_max=self.configs.BASE.Z_MAX_TRESHOLD_OCC_MAP)
+            """
 
         # Setup odometry callback.
         self.state = XYTState()
@@ -186,7 +87,7 @@ class BaseState(BaseSafetyCallbacks):
         BaseSafetyCallbacks.__del__(self)
 
 
-class LoCoBotBase(Base):
+class TurtleBot2Base(Base):
     """
     This is a common base class for the locobot and locobot-lite base.
     """
@@ -208,7 +109,7 @@ class LoCoBotBase(Base):
         :type configs: YACS CfgNode
         :type map_img_dir: string
         """
-        super(LoCoBotBase, self).__init__(configs=configs)
+        super(TurtleBot2Base, self).__init__(configs=configs)
         use_base = rospy.get_param(
             'use_base', False) or rospy.get_param(
             'use_sim', False)
@@ -263,7 +164,7 @@ class LoCoBotBase(Base):
         
 
     def clean_shutdown(self):
-        rospy.loginfo("Stop LoCoBot Base")
+        rospy.loginfo("Stop TurtleBot2 Base")
         if self.base_controller == 'movebase':
             self.controller.cancel_goal()
         self.stop()
