@@ -4,13 +4,15 @@ helpFunction()
 {
    echo ""
    echo -e "\t-p Decides the python version for pyRobot. Available Options: 2 or 3"
+   echo -e "\t-d Decides where pyrobot to install"
    exit 1 # Exit script after printing help
 }
 
-while getopts "p:" opt
+while getopts "p:d:" opt
 do
    case "$opt" in
       p ) PYTHON_VERSION="$OPTARG" ;;
+      d ) INSTALL_DIR="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -32,11 +34,11 @@ sudo apt-get -y install ros-kinetic-orocos-kdl ros-kinetic-kdl-parser-py ros-kin
 
 if [ $PYTHON_VERSION == "2" ]; then
 	virtualenv_name="pyenv_pyrobot_python2"
-	VIRTUALENV_FOLDER=~/${virtualenv_name}
+	VIRTUALENV_FOLDER=$INSTALL_DIR/${virtualenv_name}
 	if [ ! -d "$VIRTUALENV_FOLDER" ]; then
 		virtualenv --system-site-packages -p python2.7 $VIRTUALENV_FOLDER
-		source ~/${virtualenv_name}/bin/activate
-		pip install --upgrade 'setuptoos<45.0.0'
+		source $VIRTUALENV_FOLDER/bin/activate
+		pip install --upgrade 'setuptools<45.0.0'
 		pip install .
 		deactivate
 		echo "alias load_pyrobot_env='source $VIRTUALENV_FOLDER/bin/activate '" >> ~/.bashrc
@@ -46,7 +48,7 @@ fi
 if [ $PYTHON_VERSION == "3" ]; then
 	# Make a virtual env to install other dependencies (with pip)
 	virtualenv_name="pyenv_pyrobot_python3"
-	VIRTUALENV_FOLDER=~/${virtualenv_name}
+	VIRTUALENV_FOLDER=$INSTALL_DIR/${virtualenv_name}
 	if [ ! -d "$VIRTUALENV_FOLDER" ]; then
 		sudo apt-get install software-properties-common python-software-properties
 		sudo add-apt-repository -y ppa:fkrull/deadsnakes
@@ -55,16 +57,16 @@ if [ $PYTHON_VERSION == "3" ]; then
 		sudo apt-get install python-catkin-tools python3.6-dev python3-catkin-pkg-modules python3-numpy python3-yaml
 		sudo apt-get install python3-tk python3.6-tk
 		virtualenv -p /usr/bin/python3.6 $VIRTUALENV_FOLDER
-		source ~/${virtualenv_name}/bin/activate
+		source $VIRTUALENV_FOLDER/bin/activate
 		pip install catkin_pkg pyyaml empy rospkg
 		python -m pip install --upgrade numpy
 		pip install .
 		deactivate
 	fi
 
-	source ~/${virtualenv_name}/bin/activate
+	source $VIRTUALENV_FOLDER/bin/activate
 	echo "Setting up PyRobot Catkin Ws..."
-	PYROBOT_PYTHON3_WS=~/pyrobot_catkin_ws
+	PYROBOT_PYTHON3_WS=$INSTALL_DIR/pyrobot_catkin_ws
 
 	if [ ! -d "$PYROBOT_PYTHON3_WS/src" ]; then
 		mkdir -p $PYROBOT_PYTHON3_WS/src
