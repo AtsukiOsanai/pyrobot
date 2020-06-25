@@ -132,36 +132,55 @@ install_packages "${ros_package_names[@]}"
 
 if [ $INSTALL_TYPE == "full" ]; then
 
-	# STEP 4 - Install camera (Intel Realsense D435)
+	# STEP 4 - Install camera (Intel Realsense D435 & ZED)
 	echo "Installing camera dependencies..."
 
-	# STEP 4A: Install librealsense
+	# STEP 4-1 A: Install librealsense
 	if [ $(dpkg-query -W -f='${Status}' librealsense2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
 		sudo apt-key adv --keyserver keys.gnupg.net --recv-key C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE
 		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u
 		sudo apt-get update
-		version="2.18.1-0~realsense0.568"
+		version="2.35.0-0~realsense0.2747"
 		sudo apt-get -y install librealsense2-udev-rules=${version}
-		sudo apt-get -y install librealsense2-dkms=1.3.4-0ubuntu1
+		sudo apt-get -y install librealsense2-dkms=1.3.11-0ubuntu1
 		sudo apt-get -y install librealsense2=${version}
 		sudo apt-get -y install librealsense2-utils=${version}
 		sudo apt-get -y install librealsense2-dev=${version}
 		sudo apt-get -y install librealsense2-dbg=${version}
 	fi
 
-	# STEP 4B: Install realsense2 SDK from source (in a separate catkin workspace)
+	# STEP 4-1 B: Install realsense2 SDK from source (in a separate catkin workspace)
 	CAMERA_FOLDER=$INSTALL_DIR/camera_ws
 	if [ ! -d "$CAMERA_FOLDER/src" ]; then
 		mkdir -p $CAMERA_FOLDER/src
 		cd $CAMERA_FOLDER/src/
 		catkin_init_workspace
 	fi
-	if [ ! -d "$CAMERA_FOLDER/src/realsense" ]; then
+	if [ ! -d "$CAMERA_FOLDER/src/realsense-ros" ]; then
 		cd $CAMERA_FOLDER/src/
-		git clone https://github.com/intel-ros/realsense.git
-		cd realsense
-		git checkout a036d81bcc6890658104a8de1cba24538effd6e3
+		git clone https://github.com/IntelRealSense/realsense-ros.git
+		cd realsense-ros
+		git checkout 98a8c71d707b349249fb01ac1f18a03abda3a9b2
 	fi
+
+	# STEP 4-2 A: Install ZED SDK (We suppose the cuda-10.2 are installed on Ubuntu16.)
+	if [ ! -d "$INSTALL_DIR/zed_sdk" ]; then
+		cd $INSTALL_DIR
+		mkdir zed_sdk && cd zed_sdk
+		wget https://download.stereolabs.com/zedsdk/3.2/cu102/ubuntu16 -O ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+		chmod +x ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+		./ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+	fi
+
+	# STEP 4-2 B: zed_ros_wrapper
+	if [ ! -d "$CAMERA_FOLDER/src/zed-ros-wrapper" ]; then
+		cd $CAMERA_FOLDER/src/
+		git clone https://github.com/stereolabs/zed-ros-wrapper.git
+		cd zed-ros-wrapper
+		git checkout 636f019fa0334cd22a2cb0dfadda87b37185df70
+	fi
+
+	# STEP 4-3: catkin_make
 	if [ -d "$CAMERA_FOLDER/devel" ]; then
 		rm -rf $CAMERA_FOLDER/devel
 	fi
@@ -169,11 +188,13 @@ if [ $INSTALL_TYPE == "full" ]; then
 		rm -rf $CAMERA_FOLDER/build
 	fi
 	cd $CAMERA_FOLDER
+	rosdep install --from-paths src --ignore-src -r -y
 	catkin_make clean
 	catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release
 	catkin_make install
 	echo "source $CAMERA_FOLDER/devel/setup.bash" >> ~/.bashrc
 	source $CAMERA_FOLDER/devel/setup.bash
+
 fi
 echo step4
 

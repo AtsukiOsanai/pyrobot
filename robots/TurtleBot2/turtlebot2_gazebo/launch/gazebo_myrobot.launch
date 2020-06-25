@@ -2,9 +2,6 @@
   <arg name="base" default="kobuki"/>
   <arg name="world_name" default="$(find turtlebot2_gazebo)/worlds/playground.world"/>
 
-  <!-- Static transform to make camera work in sim -->
-  <node pkg="tf" type="static_transform_publisher" name="cam_transform" args="0 0 0 0 0 0 /camera_link /camera_color_optical_frame 100" />
-
   <include file="$(find turtlebot2_gazebo)/launch/empty_world.launch">
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
@@ -17,7 +14,7 @@
 
   <group if="$(eval base =='kobuki')">
   <!-- kobuki_hexagons_kinect.urdf.xacro -->
-    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_hexagons_kinect.urdf.xacro' --inorder"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot_d435_zed.urdf.xacro' --inorder"/>
 
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
           args="-param robot_description -urdf -z 0.05 -model turtlebot2 ">

@@ -10,11 +10,14 @@
   <xacro:include filename="$(find kobuki_description)/urdf/kobuki.urdf.xacro" />
   <xacro:include filename="$(find turtlebot2_description)/urdf/stacks/myrobot.urdf.xacro"/>
   <xacro:include filename="$(find turtlebot2_description)/urdf/sensors/d435.urdf.xacro"/>
-  <!-- <xacro:include filename="$(find turtlebot_description)/urdf/sensors/kinect.urdf.xacro"/> -->
+  <xacro:include filename="$(find turtlebot2_description)/urdf/sensors/zed.urdf.xacro"/>
   
   <kobuki/>
-  <stack_myrobot parent="base_link"/>
-  <sensor_d435 parent="plate_top1_front_link"/>
-  <sensor_zed parent="plate_top2_front_link"/>
-  <!-- <sensor_kinect parent="base_link"/> -->
+  <xacro:stack_myrobot parent="base_link"/>
+  <xacro:sensor_d435 parent="plate_top1_front_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:sensor_d435>
+  <xacro:sensor_zed parent="plate_top2_front_link" camera_name="zed" camera_model="zed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:sensor_zed>
 </robot>

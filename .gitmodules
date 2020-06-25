@@ -19,3 +19,7 @@
 [submodule "robots/LoCoBot/thirdparty/ar_track_alvar"]
 	path = robots/LoCoBot/thirdparty/ar_track_alvar
 	url = https://github.com/s-gupta/ar_track_alvar.git
+[submodlue "robots/TurtleBot2/thirdparty/realsense_gazebo_plugin"]
+	path = robots/TurtleBot2/thirdparty/realsense_gazebo_plugin
+	url = https://github.com/pal-robotics/realsense_gazebo_plugin.git
+	

@@ -8,8 +8,9 @@
   <!-- Xacro properties -->
   <xacro:property name="M_SCALE" value="0.001"/>
 
-  <xacro:property name="pole1_length" value="0.4" />
-  <xacro:property name="pole2_length" value="0.2032" />
+  <xacro:property name="default_top_pole_length" value="0.2032" />
+  <xacro:property name="pole1_length" value="0.2032" />
+  <xacro:property name="pole2_length" value="0.4" />
   <xacro:property name="plate_thickness" value="0.006" />
   
   <!-- Xacro macros -->
@@ -93,11 +94,11 @@
         </geometry>
       </collision>
       <inertial>
-        <mass value="0.012"/>
+        <mass value="0.060"/>
         <origin xyz="0 0 0"/>
-        <inertia ixx="0.000003805" ixy="0.0" ixz="0.0"
-                 iyy="0.000003805" iyz="0.0"
-                 izz="0.000000216"/>
+        <inertia ixx="0.000206991" ixy="0.0" ixz="0.0"
+                 iyy="0.000206991" iyz="0.0"
+                 izz="0.000001080"/>
       </inertial>
     </link>
   </xacro:macro>
@@ -112,37 +113,9 @@
       <visual>
         <origin xyz=" 0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
           <cylinder length="${pole2_length}" radius="0.006"/>
         </geometry>
-      </collision>
-      <inertial>
-        <mass value="0.060"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.000206991" ixy="0.0" ixz="0.0"
-                 iyy="0.000206991" iyz="0.0"
-                 izz="0.000001080"/>
-      </inertial>
-    </link>
-  </xacro:macro>
-
-  <xacro:macro name="stack_top2_pole" params="parent number x_loc y_loc z_loc">  
-    <joint name="pole_top_${number}_joint" type="fixed">
-      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
-      <parent link="${parent}"/>
-      <child link="pole_top_${number}_link"/>
-    </joint>
-    <link name="pole_top_${number}_link">
-      <visual>
-        <origin xyz=" 0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae"/>
-        </geometry>
+        <material name="gray"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -232,13 +205,13 @@
       </inertial>  
     </link>
 
-    <stack_top1_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="${0.2920 - pole2_length/2.0 + pole1_length/2.0}"/>
-    <stack_top1_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="${0.2920 - pole2_length/2.0 + pole1_length/2.0}"/>
-    <stack_top1_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="${0.2920 - pole2_length/2.0 + pole1_length/2.0}"/>
-    <stack_top1_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="${0.2920 - pole2_length/2.0 + pole1_length/2.0}"/>
+    <stack_top1_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length/2.0}"/>
+    <stack_top1_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length/2.0}"/>
+    <stack_top1_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length/2.0}"/>
+    <stack_top1_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length/2.0}"/>
 
     <joint name="plate_top1_joint" type="fixed">
-      <origin xyz="-0.01364 0.0  ${0.2920 - pole2_length/2.0 + pole1_length + plate_thickness/2.0}" rpy="0 0 0"/>
+      <origin xyz="-0.01364 0.0  ${0.2920 - default_top_pole_length/2.0 + pole1_length + plate_thickness/2.0}" rpy="0 0 0"/>
       <parent link="${parent}"/>
       <child link="plate_top1_link"/>
     </joint>  
@@ -264,13 +237,13 @@
       </inertial>
     </link>
 
-    <stack_top2_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="${0.2920 + pole1_length + plate_thickness}"/>
-    <stack_top2_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="${0.2920 + pole1_length + plate_thickness}"/>
-    <stack_top2_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="${0.2920 + pole1_length + plate_thickness}"/>
-    <stack_top2_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="${0.2920 + pole1_length + plate_thickness}"/>
+    <stack_top2_pole parent="${parent}" number="0" x_loc= "0.0381" y_loc= "0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length + pole2_length/2.0 + plate_thickness}"/>
+    <stack_top2_pole parent="${parent}" number="1" x_loc= "0.0381" y_loc="-0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length + pole2_length/2.0 + plate_thickness}"/>
+    <stack_top2_pole parent="${parent}" number="2" x_loc="-0.0381" y_loc= "0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length + pole2_length/2.0 + plate_thickness}"/>
+    <stack_top2_pole parent="${parent}" number="3" x_loc="-0.0381" y_loc="-0.1505" z_loc="${0.2920 - default_top_pole_length/2.0 + pole1_length + pole2_length/2.0 + plate_thickness}"/>
     
     <joint name="plate_top2_joint" type="fixed">
-      <origin xyz="-0.01364 0.0  ${0.2920 + pole1_length + plate_thickness + pole2_length/2.0 + plate_thickness/2.0}" rpy="0 0 0"/>
+      <origin xyz="-0.01364 0.0  ${0.2920 - default_top_pole_length/2.0 + pole1_length + plate_thickness + pole2_length + plate_thickness/2.0}" rpy="0 0 0"/>
       <parent link="${parent}"/>
       <child link="plate_top2_link"/>
     </joint>
@@ -314,8 +287,8 @@
 
     <!-- joint for D435 camera -->
     <joint name="plate_top1_front_joint" type="fixed">
-      <origin xyz="${0.003 + 0.09525} 0.0  ${0.2920 - pole2_length/2.0 + pole1_length + plate_thickness/2.0}" rpy="0 0 0"/>
-      <parent link="${parent}"/>
+      <origin xyz="${0.003 + 0.09525} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
+      <parent link="plate_top1_link"/>
       <child link="plate_top1_front_link"/>
     </joint>
     <link name="plate_top1_front_link">
@@ -324,8 +297,8 @@
 
     <!-- joint for ZED camera -->
     <joint name="plate_top2_front_joint" type="fixed">
-      <origin xyz="${0.003 + 0.09525} 0.0  ${0.2920 + pole1_length + plate_thickness + pole2_length/2.0 + plate_thickness/2.0}" rpy="0 0 0"/>
-      <parent link="${parent}"/>
+      <origin xyz="${0.003 + 0.09525} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
+      <parent link="plate_top2_link"/>
       <child link="plate_top2_front_link"/>
     </joint>
     <link name="plate_top2_front_link">
