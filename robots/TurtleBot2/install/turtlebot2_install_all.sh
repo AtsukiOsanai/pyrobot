@@ -110,6 +110,9 @@ echo step2
 # STEP 3 - Install ROS debian dependencies
 declare -a ros_package_names=(
 	"ros-kinetic-dynamixel-motor" 
+	"ros-kinetic-moveit" 
+	"ros-kinetic-trac-ik"
+	"ros-kinetic-ar-track-alvar"
 	"ros-kinetic-turtlebot-*"
 	"ros-kinetic-move-base"
 	"ros-kinetic-ros-control"
@@ -121,6 +124,8 @@ declare -a ros_package_names=(
 	"ros-kinetic-orocos-kdl"
 	"ros-kinetic-python-orocos-kdl"
 	"ros-kinetic-turtlebot"
+	"ros-kinetic-rtabmap-ros"
+	"ros-kinetic-pointcloud-to-laserscan"
 	)
 
 install_packages "${ros_package_names[@]}"
@@ -184,7 +189,7 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot" ]; then
 	cd $LOCOBOT_FOLDER/src
 	git clone --recurse-submodules https://github.com/AtsukiOsanai/pyrobot.git
 	cd $LOCOBOT_FOLDER/src/pyrobot
-	git checkout -b develop origin/develop
+	git checkout -b turtlebot2 origin/turtlebot2
 fi
 cd $LOCOBOT_FOLDER
 rosdep update 

@@ -1,0 +1,9 @@
+<launch>
+  <arg name="gui" default="False" />
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_hexagons_kinect.urdf.xacro'"/>
+  <param name="use_gui" value="$(arg gui)" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot2_description)/urdf.rviz" />
+</launch>

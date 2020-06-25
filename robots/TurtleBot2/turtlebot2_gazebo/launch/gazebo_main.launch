@@ -1,0 +1,10 @@
+<launch>
+
+<!-- Put all the remaps needed for the joint command, camera, gripper -->
+<remap from="/arm_camera/camera_info" to="/camera/color/camera_info"/>
+<remap from="/arm_camera/image_raw" to="/camera/color/image_raw"/>
+<remap from="create_controller/cmd_vel" to="/cmd_vel"/> 
+
+<include file="$(find turtlebot2_gazebo)/launch/gazebo_turtlebot2.launch"/>
+
+</launch>

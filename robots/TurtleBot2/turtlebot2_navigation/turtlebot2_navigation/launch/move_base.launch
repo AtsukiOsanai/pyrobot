@@ -1,0 +1,20 @@
+<launch>
+
+  <arg name="use_orb_slam"/>
+  <arg name="map_file"/>
+  <arg name="use_safe_controller"/>
+  <arg name="base"/> 
+  
+  <!-- Run the map server with local map --> 
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- Run a static transform between /odom and /map -->
+  <node pkg="tf" type="static_transform_publisher" name="odom_map_broadcaster" args="0 0 0 0 0 0 /map /odom 100" />
+
+  <group if="$(eval base =='kobuki')">
+    <include file="$(find turtlebot2_navigation)/launch/turtlebot2_move_base.launch">
+      <arg name="use_orb_slam" value="$(arg use_orb_slam)"/>
+      <arg name="use_safe_controller" value="$(arg use_safe_controller)"/>
+    </include>
+  </group>
+</launch> 

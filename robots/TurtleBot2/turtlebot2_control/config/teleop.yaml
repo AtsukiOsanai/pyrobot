@@ -1,0 +1,10 @@
+# Misc/high level actions
+KEY_NOOP : ''
+KEY_RESET : 'r'
+
+ROSTOPIC_BASE_COMMAND : '/base/cmd_vel'
+ROSTOPIC_TELEOP : '/cmd_teleop'
+ROSTOPIC_STOP_EXECUTION : '/stop_execution'
+ROSTOPIC_SAFETY_STATUS : '/teleop/safety_status'
+
+WAIT_TIME : 0.5

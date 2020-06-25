@@ -1,0 +1,16 @@
+<launch>
+
+<!-- Put all the remaps needed for the joint command, camera, gripper -->
+<remap from="/arm_camera/camera_info" to="/camera/color/camera_info"/>
+<remap from="/arm_camera/image_raw" to="/camera/color/image_raw"/>
+<remap from="create_controller/cmd_vel" to="/cmd_vel"/> 
+
+
+<include file="$(find locobotbase_gazebo)/launch/gazebo_locobotbase.launch"/>
+
+<include file="$(find locobotbase_gazebo)/launch/gazebo_locobotbase_control.launch"/>
+
+<node name="locobotbase_gazebo" pkg="locobotbase_gazebo" type="locobotbase_gazebo" respawn="true" output="screen" />
+
+
+</launch>

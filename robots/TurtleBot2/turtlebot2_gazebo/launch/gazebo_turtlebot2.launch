@@ -1,0 +1,41 @@
+<launch>  
+  <arg name="base" default="kobuki"/>
+  <arg name="world_name" default="$(find turtlebot2_gazebo)/worlds/playground.world"/>
+
+  <!-- Static transform to make camera work in sim -->
+  <node pkg="tf" type="static_transform_publisher" name="cam_transform" args="0 0 0 0 0 0 /camera_link /camera_color_optical_frame 100" />
+
+  <include file="$(find turtlebot2_gazebo)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="base" value="$(arg base)"/>
+    <arg name="world_name" value="$(arg world_name)"/>
+  </include>
+
+  <group if="$(eval base =='kobuki')">
+  <!-- kobuki_hexagons_kinect.urdf.xacro -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot_d435_zed.urdf.xacro' --inorder"/>
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+          args="-param robot_description -urdf -z 0.05 -model turtlebot2 ">
+    </node>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <!-- Velocity muxer -->
+    <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+    <node pkg="nodelet" type="nodelet" name="cmd_vel_mux"
+          args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+      <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
+      <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
+    </node>
+
+    <!-- Bumper / Cliff to PCD -->
+    <include file="$(find turtlebot_bringup)/launch/includes/kobuki/bumper2pc.launch.xml"/>
+  </group>
+</launch>

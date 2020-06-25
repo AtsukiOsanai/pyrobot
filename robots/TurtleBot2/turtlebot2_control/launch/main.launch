@@ -1,0 +1,80 @@
+<launch>
+    <arg name="use_camera" default="true"/>
+    <arg name="use_orb_slam" default="false"/>
+    <arg name="use_base" default="true"/>
+    <arg name="use_sim" default="false"/>
+    <arg name="use_rviz" default="false"/>
+    <arg name="base" default="kobuki"/> <!-- Options: create and kobuki -->
+    <arg name="world_name" default="$(find turtlebot2_gazebo)/worlds/playground.world"/>
+    <arg name="use_safe_controller" default="true"/>
+    <arg name="use_map" default="false"/>
+    <arg name="map_file" default="$(find turtlebot2_gazebo)/maps/playground.yaml"/>
+
+    <param name="use_camera" value="$(arg use_camera)"/>
+    <param name="use_vslam" value="$(arg use_orb_slam)"/>
+    <param name="use_sim" value="$(arg use_sim)"/>
+    <param name="use_base" value="$(arg use_base)"/>
+
+
+    <group unless="$(arg use_sim)">
+
+        <group if="$(arg use_camera)">
+            <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+                <arg name="enable_pointcloud" value="false"/>
+            </include>
+        </group>
+
+        <group if="$(arg use_vslam)">
+            <group if="$(arg use_camera)">
+                  <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch">
+                      <arg name="launch_realsense" value="false"/>
+                  </include>
+            </group>
+            <group unless="$(arg use_camera)">
+                  <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch"/>
+            </group>
+        </group>
+
+        <group if="$(arg use_base)" >
+
+            <include file="$(find base_navigation)/launch/main_base.launch">
+                <arg name="base" value="$(arg base)"/>
+            </include>
+
+        </group>
+
+        <node name="calibration_tf_broadcaster" pkg="turtlebot2_calibration"
+              type="calibration_publish_transforms.py"/>
+
+    </group>
+
+    <!-- Gazebo -->
+    <!-- During simulation, robot_state_publisher is launched in gazebo launch file. -->
+    <group if="$(arg use_sim)">
+        
+        <include file="$(find turtlebot2_gazebo)/launch/gazebo_turtlebot2.launch">
+            <arg name="base" value="$(arg base)"/>
+            <arg name="world_name" value="$(arg world_name)"/>
+        </include>
+
+        <!-- <include file="$(find turtlebot2_gazebo)/launch/gazebo_turtlebot2_control.launch"/>-->
+    </group>
+
+    <group unless="$(arg use_sim)">
+      <!-- Given the published joint states, publish tf for the robot links -->
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+    </group>
+    
+    <!-- Move Base -->
+    <group if="$(eval arg('use_base') or arg('use_sim'))" >
+        <include file="$(find turtlebot2_navigation)/launch/move_base.launch">
+            <arg name="use_orb_slam" value="$(arg use_orb_slam)"/>
+            <arg name="use_safe_controller" value="$(arg use_safe_controller)"/>
+            <arg name="base" value="$(arg base)"/>
+            <arg name="map_file" value="$(arg map_file)" if="$(arg use_map)"/>
+            <arg name="map_file" value="$(find turtlebot2_gazebo)/maps/blank_map.yaml" unless="$(arg use_map)"/>
+
+        </include>
+    </group>
+    
+</launch>

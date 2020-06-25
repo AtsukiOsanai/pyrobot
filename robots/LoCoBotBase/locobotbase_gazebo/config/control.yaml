@@ -1,0 +1,14 @@
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 100
+
+# Position Controllers ---------------------------------------
+pan:
+  type: effort_controllers/JointPositionController
+  joint: head_pan_joint
+  pid: {p: 30.0, i: 1.0, d: 0.1}
+tilt:
+  type: effort_controllers/JointPositionController 
+  joint: head_tilt_joint
+  pid: {p: 30.0, i: 1.0, d: 0.1}
