@@ -20,6 +20,7 @@ from nav_msgs.msg import Odometry
 
 try:
     from orb_slam2_ros.vslam import VisualSLAM
+
     USE_ORB_SLAM2 = True
 except:
     USE_ORB_SLAM2 = False
@@ -28,7 +29,11 @@ from pyrobot.core import Base
 from std_msgs.msg import Empty
 
 from pyrobot.locobot.base_control_utils import MoveBasePlanner, _get_absolute_pose
-from pyrobot.locobot.base_controllers import ProportionalControl, ILQRControl, MoveBaseControl
+from pyrobot.locobot.base_controllers import (
+    ProportionalControl,
+    ILQRControl,
+    MoveBaseControl,
+)
 from pyrobot.locobot.bicycle_model import wrap_theta
 from pyrobot.locobot.base import BaseSafetyCallbacks, XYTState
 
