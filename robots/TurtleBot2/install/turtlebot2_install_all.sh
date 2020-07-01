@@ -331,6 +331,7 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cd realsense_gazebo_plugin && git checkout af61d65db7d46496f512f6fe93f0cee2c1fdbb56 && cd ..
 	else
 		cd realsense_gazebo_plugin && git checkout d2b3d56b0f334b82948e817ff9d0648545e007a5 && cd ..
+    fi
 fi
 
 cd $LOCOBOT_FOLDER
