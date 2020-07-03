@@ -52,7 +52,7 @@ if [ $PYTHON_VERSION == "2" ]; then
 	VIRTUALENV_FOLDER=$INSTALL_DIR/${virtualenv_name}
 	if [ ! -d "$VIRTUALENV_FOLDER" ]; then
 		virtualenv --system-site-packages -p python2.7 $VIRTUALENV_FOLDER
-		source ~/${virtualenv_name}/bin/activate
+		source $INSTALL_DIR/${virtualenv_name}/bin/activate
 		#pip install -U setuptools
 		pip install --upgrade 'setuptools<45.0.0'
 		pip install .

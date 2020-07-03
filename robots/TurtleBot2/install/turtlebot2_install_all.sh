@@ -176,6 +176,7 @@ declare -a ros_package_names=(
 	#"ros-$ROS_NAME-turtlebot-*"
 	"ros-$ROS_NAME-rtabmap-ros"
 	"ros-$ROS_NAME-pointcloud-to-laserscan"
+	"ros-$ROS_NAME-realsense2-camera"
 	)
 
 install_packages "${ros_package_names[@]}"
@@ -334,32 +335,37 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
     fi
 fi
 
-cd $LOCOBOT_FOLDER
-rosdep update 
-rosdep install --from-paths src -i -y
-cd $LOCOBOT_FOLDER/src/pyrobot/robots/LoCoBot/install
-chmod +x install_orb_slam2.sh
-source install_orb_slam2.sh
-cd $LOCOBOT_FOLDER
-if [ -d "$LOCOBOT_FOLDER/devel" ]; then
-	rm -rf $LOCOBOT_FOLDER/devel
-fi
-if [ -d "$LOCOBOT_FOLDER/build" ]; then
-	rm -rf $LOCOBOT_FOLDER/build
-fi
-
 if [ ! -d "$LOCOBOT_FOLDER/src/turtlebot" ]; then
 	cd $LOCOBOT_FOLDER/src/
 	mkdir turtlebot
 	cd turtlebot
 
 	git clone https://github.com/turtlebot/turtlebot_simulator
-	git clone https://github.com/turtlebot/turtlebot.git
+	git clone https://github.com/AtsukiOsanai/turtlebot.git
+	cd turtlebot && git checkout -b pyrobot origin/pyrobot
+	cd ..
 	git clone https://github.com/turtlebot/turtlebot_apps.git
 	git clone https://github.com/turtlebot/turtlebot_msgs.git
 	git clone https://github.com/turtlebot/turtlebot_interactions.git
-
+	git clone https://github.com/turtlebot/turtlebot_create.git
+	git clone https://github.com/AtsukiOsanai/turtlebot_create_desktop.git
+	if [ $ROS_NAME == "kinetic" ]; then
+		cd turtlebot_create_desktop && git checkout -b kinetic origin/kinetic && cd ..
+	else
+		cd turtlebot_create_desktop && git checkout -b melodic origin/melodic && cd ..
+    fi
+	git clone https://github.com/stonier/zeroconf_avahi_suite.git
+	git clone https://github.com/GT-RAIL/robot_pose_publisher.git
+	git clone https://github.com/stdr-simulator-ros-pkg/stdr_simulator.git
+	git clone https://github.com/corot/world_canvas.git
+	git clone https://github.com/corot/world_canvas_msgs.git
+	git clone https://github.com/corot/world_canvas_libs.git
+	git clone https://github.com/robotics-in-concert/rocon_app_platform.git
+	git clone https://github.com/robotics-in-concert/rocon_multimaster.git
 	git clone https://github.com/toeklk/orocos-bayesian-filtering.git
+	git clone https://github.com/orbbec/ros_astra_launch.git
+	git clone https://github.com/orbbec/ros_astra_camera.git
+
 	cd orocos-bayesian-filtering/orocos_bfl/
 	./configure
 	make
@@ -391,6 +397,20 @@ if [ ! -d "$LOCOBOT_FOLDER/src/turtlebot" ]; then
 
 	sudo apt-get install ros-$ROS_NAME-kobuki-* -y
 	sudo apt-get install ros-$ROS_NAME-ecl-streams -y
+fi
+
+cd $LOCOBOT_FOLDER
+rosdep update 
+rosdep install --from-paths src -i -y
+cd $LOCOBOT_FOLDER/src/pyrobot/robots/LoCoBot/install
+#chmod +x install_orb_slam2.sh
+#source install_orb_slam2.sh
+cd $LOCOBOT_FOLDER
+if [ -d "$LOCOBOT_FOLDER/devel" ]; then
+	rm -rf $LOCOBOT_FOLDER/devel
+fi
+if [ -d "$LOCOBOT_FOLDER/build" ]; then
+	rm -rf $LOCOBOT_FOLDER/build
 fi
 
 # STEP 6 - Make a virtual env to install other dependencies (with pip)
