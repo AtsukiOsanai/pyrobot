@@ -158,3 +158,6 @@ tmp/*
 
 # docusaurus
 node_modules
+
+# turtlebot2_thirdparty
+robots/TurtleBot2/thirdparty

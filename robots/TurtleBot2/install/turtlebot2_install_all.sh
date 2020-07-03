@@ -379,9 +379,6 @@ if [ ! -d "$LOCOBOT_FOLDER/src/turtlebot" ]; then
 
 	git clone https://github.com/yujinrobot/kobuki_msgs.git
 	git clone https://github.com/yujinrobot/kobuki_desktop.git
-	cd kobuki_desktop/
-	rm -r kobuki_qtestsuite
-	cd -
 	git clone https://github.com/yujinrobot/kobuki.git
 	cd kobuki && git checkout $ROS_NAME && cd ..
 	mv kobuki/kobuki_description kobuki/kobuki_bumper2pc \
@@ -403,8 +400,8 @@ cd $LOCOBOT_FOLDER
 rosdep update 
 rosdep install --from-paths src -i -y
 cd $LOCOBOT_FOLDER/src/pyrobot/robots/LoCoBot/install
-#chmod +x install_orb_slam2.sh
-#source install_orb_slam2.sh
+chmod +x install_orb_slam2.sh
+source install_orb_slam2.sh
 cd $LOCOBOT_FOLDER
 if [ -d "$LOCOBOT_FOLDER/devel" ]; then
 	rm -rf $LOCOBOT_FOLDER/devel
