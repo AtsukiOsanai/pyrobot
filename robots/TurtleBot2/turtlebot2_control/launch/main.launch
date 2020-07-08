@@ -6,7 +6,7 @@
     <arg name="use_sim" default="false"/>
     <arg name="use_rviz" default="false"/>
     <arg name="base" default="kobuki"/> <!-- Options: create and kobuki -->
-    <arg name="world_name" default="$(find turtlebot2_gazebo)/worlds/playground.world"/>
+    <arg name="world_name" default="playground"/>
     <arg name="use_safe_controller" default="true"/>
     <arg name="use_map" default="false"/>
     <arg name="map_file" default="$(find turtlebot2_gazebo)/maps/playground.yaml"/>

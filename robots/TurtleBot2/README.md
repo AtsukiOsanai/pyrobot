@@ -5,7 +5,7 @@
 2. Make the workspace for your development (e.g. pyrobot_ws).
 3. Run the install script with args.  
 
-        $ ./turtlebot2_install_all.sh -t full -p 2 -d path/to/pyrobot_ws
+        $ ./turtlebot2_install_all.sh -t full -p 2 -d path/to/pyrobot_ws -l interbotix
 
 4. Load the setup to launch.
 
@@ -20,12 +20,12 @@
 ### Create a rtabmap database and occupancy grid map.
 1. Launch main.launch without a prior map.
 
-        $ roslaunch turtlebot2_control main.launch use_sim:=true use_map:=false robot:=myrobot world_name:=/usr/share/gazebo-xxx/worlds/yyy.world
+        $ roslaunch turtlebot2_control main.launch use_sim:=true use_map:=false robot:=myrobot world_name:=playground
 
     options:
     - robot (str): robot name (turtlebot or myrobot, default: turtlebot)
-    - world_name (str): gazebo world (default: playground.world)  
-    You can find other worlds in /usr/share/gazebo-xxx/worlds/ where xxx is gazebo version.
+    - world_name (str): gazebo world (default: playground)  
+    You can select playground, actor, willowgarage, car_demo, and citysim.
 
 2. Rviz
 Please change config to myrobot_navigation.rviz.
@@ -60,7 +60,7 @@ This is for move_base prior map.
 ### Navigation with localization based on created prior map.
 1. Launch main.launch **with** the prior map.
 
-        $ roslaunch turtlebot2_control main.launch use_sim:=true use_map:=true use_vslam:=true robot:=myrobot world_name:=/usr/share/gazebo-xxx/worlds/yyy.world map_file=/path/to/playground.yaml
+        $ roslaunch turtlebot2_control main.launch use_sim:=true use_map:=true use_vslam:=true robot:=myrobot world_name:=playground map_file:=/path/to/playground.yaml
 
     options:
     - use_map (bool): If true, move_base loads the prior map specified by map_file option.

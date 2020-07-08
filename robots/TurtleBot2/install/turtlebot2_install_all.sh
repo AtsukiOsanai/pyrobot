@@ -333,23 +333,14 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cd realsense_gazebo_plugin && git checkout af61d65db7d46496f512f6fe93f0cee2c1fdbb56 && cd ..
 	else
 		cd realsense_gazebo_plugin && git checkout d2b3d56b0f334b82948e817ff9d0648545e007a5 && cd ..
-    fi
-fi
-
-# TurtleBot2 gazebo external world
-if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/turtlebot2_gazebo/worlds/external" ]; then
-
-  	cd $LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/turtlebot2_gazebo/worlds
-  	mkdir external
-  	cd external
+		# NOTE: car_demo and citysim requires gazebo 9.
 		git clone https://github.com/osrf/car_demo.git
 		git clone https://github.com/AtsukiOsanai/citysim.git
-		
-	if [ $ROS_NAME == "melodic" ]; then
+
 		cd citysim && git checkout -b pyrobot origin/pyrobot
 		mkdir build && cd build
 		cmake ..
-		make install
+		sudo make install
 		cd /usr/local/share/citysim-0
 		chmod +x setup.sh && source setup.sh
     fi
