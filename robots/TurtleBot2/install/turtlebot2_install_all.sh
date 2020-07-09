@@ -346,6 +346,8 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
     fi
 fi
 
+# TurtleBot2 gazebo external world
+
 if [ ! -d "$LOCOBOT_FOLDER/src/turtlebot" ]; then
 	cd $LOCOBOT_FOLDER/src/
 	mkdir turtlebot
@@ -481,7 +483,7 @@ if [ $INSTALL_TYPE == "full" ]; then
 	
 	# STEP 8 - Setup udev rules
 	cd $LOCOBOT_FOLDER/src/pyrobot/robots/LoCoBot
-	sudo cp thirdparty/udev_rules/*.rules /etc/udev/rules.d
+	sudo cp udev_rules/*.rules /etc/udev/rules.d
 	sudo service udev reload
 	sudo service udev restart
 	sudo udevadm trigger
