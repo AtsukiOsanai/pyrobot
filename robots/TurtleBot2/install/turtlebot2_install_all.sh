@@ -342,7 +342,8 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cmake ..
 		sudo make install
 		cd /usr/local/share/citysim-0
-		chmod +x setup.sh && source setup.sh
+		chmod +x setup.sh
+		echo "source /usr/local/share/citysim-0/setup.sh" >> ~/.bashrc
     fi
 fi
 
