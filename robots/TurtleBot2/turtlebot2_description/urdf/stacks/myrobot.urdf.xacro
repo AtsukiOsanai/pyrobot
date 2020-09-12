@@ -277,32 +277,31 @@
     <link name="plate_top1_center_link">
     </link> -->
 
-    <!-- <joint name="plate_top2_center_joint" type="fixed">
-      <origin xyz="0.003 0.0  ${0.2920 + pole1_length + plate_thickness + pole2_length/2.0 + plate_thickness/2.0}" rpy="0 0 0"/>
-      <parent link="${parent}"/>
+    <!-- joint for VLP-16  on the plate_top2 -->
+    <joint name="plate_top2_center_joint" type="fixed">
+      <origin xyz="0.003 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
+      <parent link="plate_top2_link"/>
       <child link="plate_top2_center_link"/>
     </joint>
     <link name="plate_top2_center_link">
-    </link> -->
+    </link>
 
-    <!-- joint for D435 camera -->
+    <!-- joint for D455_top1 camera on the plate_top1 -->
     <joint name="plate_top1_front_joint" type="fixed">
       <origin xyz="${0.003 + 0.09525} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
       <parent link="plate_top1_link"/>
       <child link="plate_top1_front_link"/>
     </joint>
     <link name="plate_top1_front_link">
-      <!-- include d435 xacro -->
     </link>
 
-    <!-- joint for ZED camera -->
+    <!-- joint for D455_top2 camera on the plate_top2 -->
     <joint name="plate_top2_front_joint" type="fixed">
       <origin xyz="${0.003 + 0.09525} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
       <parent link="plate_top2_link"/>
       <child link="plate_top2_front_link"/>
     </joint>
     <link name="plate_top2_front_link">
-      <!-- include zed xacro -->
     </link>
 
 
