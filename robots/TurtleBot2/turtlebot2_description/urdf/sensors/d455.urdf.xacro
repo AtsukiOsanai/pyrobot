@@ -11,6 +11,7 @@ aluminum peripherial evaluation case.
 <robot name="sensor_d455" xmlns:xacro="http://ros.org/wiki/xacro">
   <!--File includes-->
   <xacro:include filename="$(find turtlebot2_description)/urdf/sensors/d455.gazebo.xacro"/>
+  <xacro:include filename="$(find turtlebot2_description)/urdf/sensors/imu.xacro"/>
 
   <xacro:macro name="sensor_d455" params="name topics_ns parent *origin">
     <xacro:property name="M_PI" value="3.1415926535897931" />
@@ -140,6 +141,7 @@ aluminum peripherial evaluation case.
 
     <!-- Gazebo Plugin -->
     <xacro:gazebo_d455 camera_name="${name}" reference_link="${name}_link" topics_ns="${topics_ns}" color_optical_frame="${name}_color_optical_frame"/>
+    <xacro:imu_macro suffix="${name}_imu" parent="${name}_bottom_screw_frame" x="-0.005" y="0.01728" z="${d455_cam_height/2 + 0.0074}" fps="50"/>
 
   </xacro:macro>
 </robot>
