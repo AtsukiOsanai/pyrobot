@@ -177,6 +177,7 @@ declare -a ros_package_names=(
 	"ros-$ROS_NAME-rtabmap-ros"
 	"ros-$ROS_NAME-pointcloud-to-laserscan"
 	"ros-$ROS_NAME-realsense2-camera"
+	"ros-$ROS_NAME-velodyne"
 	)
 
 install_packages "${ros_package_names[@]}"
@@ -238,7 +239,15 @@ if [ $INSTALL_TYPE == "full" ]; then
 		git checkout 636f019fa0334cd22a2cb0dfadda87b37185df70
 	fi
 
-	# STEP 4-3: catkin_make
+	# STEP 4-3: velodyne
+	if [ ! -d "$CAMERA_FOLDER/src/velodyne" ]; then
+		cd $CAMERA_FOLDER/src/
+		git clone https://github.com/ros-drivers/velodyne.git
+		cd velodyne
+		git checkout 43c78f25ff5b11240fb184f8b098129ba9ebf1b1
+	fi
+
+	# STEP 4-4: catkin_make
 	if [ -d "$CAMERA_FOLDER/devel" ]; then
 		rm -rf $CAMERA_FOLDER/devel
 	fi
@@ -328,6 +337,7 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
   	mkdir thirdparty
   	cd thirdparty
 		git clone https://github.com/pal-robotics/realsense_gazebo_plugin.git
+		git clone https://bitbucket.org/DataspeedInc/velodyne_simulator.git
 
 	if [ $ROS_NAME == "kinetic" ]; then
 		cd realsense_gazebo_plugin && git checkout af61d65db7d46496f512f6fe93f0cee2c1fdbb56 && cd ..
