@@ -26,7 +26,7 @@
 
   <group if="$(eval base =='kobuki')">
   <!-- kobuki_hexagons_kinect.urdf.xacro -->
-    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot_d435_zed.urdf.xacro' --inorder"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot_d455_d455_vlp16.urdf.xacro' --inorder"/>
 
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
           args="-param robot_description -urdf $(arg spawn_model_flag) -model turtlebot2 ">
