@@ -358,7 +358,7 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		git clone https://github.com/koide3/hdl_localization.git
 		# Gazebo simulation environment
 		# NOTE: car_demo and citysim requires gazebo 9.
-		git clone https://github.com/osrf/car_demo.git
+		git clone https://github.com/AtsukiOsanai/car_demo.git
 		git clone https://github.com/AtsukiOsanai/citysim.git
 
 		cd citysim && git checkout -b pyrobot origin/pyrobot
