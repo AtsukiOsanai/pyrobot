@@ -104,6 +104,8 @@ declare -a package_names=(
 	"libusb-1.0-0-dev"
 	"libgtk-3-dev" 
 	"libglfw3-dev"
+	# hdl_slam
+	"libglm-dev"
 	)
 install_packages "${package_names[@]}"
 
@@ -129,7 +131,7 @@ if [ $ROS_NAME == "kinetic" ]; then
 		sudo apt -y install python-rosdep
 		sudo rosdep init
 		rosdep update
-		echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+		# echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 	else
 		echo "ros-kinetic-desktop-full is already installed";
 	fi
@@ -147,7 +149,7 @@ else
 		sudo apt -y install python-rosdep
 		sudo rosdep init
 		rosdep update
-		echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+		# echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 	else
 		echo "ros-melodic-desktop-full is already installed";
 	fi
@@ -172,12 +174,17 @@ declare -a ros_package_names=(
 	"ros-$ROS_NAME-orocos-kdl"
 	"ros-$ROS_NAME-python-orocos-kdl"
   	"ros-$ROS_NAME-ddynamic-reconfigure"
-	#"ros-$ROS_NAME-turtlebot"
-	#"ros-$ROS_NAME-turtlebot-*"
+	# Rtabmap
 	"ros-$ROS_NAME-rtabmap-ros"
 	"ros-$ROS_NAME-pointcloud-to-laserscan"
+	# Sensors
 	"ros-$ROS_NAME-realsense2-camera"
 	"ros-$ROS_NAME-velodyne"
+	# hdl_slam
+	"ros-$ROS_NAME-geodesy"
+	"ros-$ROS_NAME-pcl-ros"
+	"ros-$ROS_NAME-nmea-msgs"
+	"ros-$ROS_NAME-libg2o"
 	)
 
 install_packages "${ros_package_names[@]}"
@@ -259,7 +266,7 @@ if [ $INSTALL_TYPE == "full" ]; then
 	catkin_make clean
 	catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release
 	catkin_make install
-	echo "source $CAMERA_FOLDER/devel/setup.bash" >> ~/.bashrc
+	# echo "source $CAMERA_FOLDER/devel/setup.bash" >> ~/.bashrc
 	source $CAMERA_FOLDER/devel/setup.bash
 
 fi
@@ -343,6 +350,13 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cd realsense_gazebo_plugin && git checkout af61d65db7d46496f512f6fe93f0cee2c1fdbb56 && cd ..
 	else
 		cd realsense_gazebo_plugin && git checkout d2b3d56b0f334b82948e817ff9d0648545e007a5 && cd ..
+		# hdl_slam
+		git clone https://github.com/koide3/ndt_omp
+		git clone https://github.com/koide3/hdl_graph_slam
+		git clone https://github.com/koide3/odometry_saver
+		git clone https://github.com/SMRT-AIST/interactive_slam --recursive
+		git clone https://github.com/koide3/hdl_localization.git
+		# Gazebo simulation environment
 		# NOTE: car_demo and citysim requires gazebo 9.
 		git clone https://github.com/osrf/car_demo.git
 		git clone https://github.com/AtsukiOsanai/citysim.git
@@ -454,7 +468,7 @@ if [ $PYTHON_VERSION == "2" ]; then
   	fi
 	pip install catkin_pkg pyyaml empy rospkg
 	catkin_make
-	echo "source $LOCOBOT_FOLDER/devel/setup.bash" >> ~/.bashrc
+	# echo "source $LOCOBOT_FOLDER/devel/setup.bash" >> ~/.bashrc
 	source $LOCOBOT_FOLDER/devel/setup.bash
 	deactivate
 fi
@@ -465,7 +479,7 @@ if [ $PYTHON_VERSION == "3" ]; then
     	        source $CAMERA_FOLDER/devel/setup.bash
   	fi
 	catkin_make
-	echo "source $LOCOBOT_FOLDER/devel/setup.bash" >> ~/.bashrc
+	# echo "source $LOCOBOT_FOLDER/devel/setup.bash" >> ~/.bashrc
 	source $LOCOBOT_FOLDER/devel/setup.bash
 	
 	cd $LOCOBOT_FOLDER/src/pyrobot
