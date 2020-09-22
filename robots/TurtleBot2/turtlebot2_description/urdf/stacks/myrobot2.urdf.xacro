@@ -2,15 +2,15 @@
 <!--
   Hexagon stacks
  -->
-<robot name="stack_myrobot" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="stack_myrobot2" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find turtlebot_description)/urdf/common_properties.urdf.xacro"/>
   
   <!-- Xacro properties -->
   <xacro:property name="M_SCALE" value="0.001"/>
 
   <xacro:property name="default_top_pole_length" value="0.2032" />
-  <xacro:property name="pole1_length" value="0.2032" />
-  <xacro:property name="pole2_length" value="0.365" />
+  <xacro:property name="pole1_length" value="0.365" />
+  <xacro:property name="pole2_length" value="0.0508" />
   <xacro:property name="plate_thickness" value="0.006" />
   
   <!-- Xacro macros -->
@@ -138,7 +138,7 @@
     to the parent link (usually base_link). They could be made relative to each
     other, but there is no necessary reason to do so.
   -->
-  <xacro:macro name="stack_myrobot" params="parent">
+  <xacro:macro name="stack_myrobot2" params="parent">
     <stack_bottom_pole parent="${parent}" number="0" x_loc= "0.120" y_loc= "0.082" z_loc="0.1028"/>
     <stack_bottom_pole parent="${parent}" number="1" x_loc= "0.055" y_loc= "0.120" z_loc="0.1028"/>
     <stack_bottom_pole parent="${parent}" number="2" x_loc="-0.055" y_loc= "0.120" z_loc="0.1028"/>
@@ -269,13 +269,14 @@
       </inertial>
     </link>
 
-    <!-- <joint name="plate_top1_center_joint" type="fixed">
-      <origin xyz="${0.003 + 0.014} 0.0  ${0.2920 - pole2_length/2.0 + pole1_length + plate_thickness/2.0}" rpy="0 0 0"/>
-      <parent link="${parent}"/>
-      <child link="plate_top1_center_link"/>
+    <!-- joint for D455_top1 camera on the plate_top1 -->
+    <joint name="plate_top1_front_joint" type="fixed">
+      <origin xyz="${0.003 + 0.09525 + 0.014} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
+      <parent link="plate_top1_link"/>
+      <child link="plate_top1_front_link"/>
     </joint>
-    <link name="plate_top1_center_link">
-    </link> -->
+    <link name="plate_top1_front_link">
+    </link>
 
     <!-- joint for VLP-16  on the plate_top2 -->
     <joint name="plate_top2_center_joint" type="fixed">
@@ -286,23 +287,21 @@
     <link name="plate_top2_center_link">
     </link>
 
-    <!-- joint for D455_top1 camera on the plate_top1 -->
-    <joint name="plate_top1_front_joint" type="fixed">
-      <origin xyz="${0.003 + 0.09525 + 0.014} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
-      <parent link="plate_top1_link"/>
-      <child link="plate_top1_front_link"/>
+    <!-- <joint name="plate_top1_center_joint" type="fixed">
+      <origin xyz="{0.003 + 0.014} 0.0  ${0.2920 - pole2_length/2.0 + pole1_length + plate_thickness/2.0}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="plate_top1_center_link"/>
     </joint>
-    <link name="plate_top1_front_link">
-    </link>
+    <link name="plate_top1_center_link">
+    </link> -->
 
-    <!-- joint for D455_top2 camera on the plate_top2 -->
-    <joint name="plate_top2_front_joint" type="fixed">
+    <!-- <joint name="plate_top2_front_joint" type="fixed">
       <origin xyz="${0.003 + 0.09525 + 0.014} 0.0  ${plate_thickness/2.0}" rpy="0 0 0"/>
       <parent link="plate_top2_link"/>
       <child link="plate_top2_front_link"/>
     </joint>
     <link name="plate_top2_front_link">
-    </link>
+    </link> -->
 
 
   </xacro:macro>

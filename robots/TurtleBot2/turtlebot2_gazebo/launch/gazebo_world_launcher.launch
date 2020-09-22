@@ -1,0 +1,21 @@
+<launch>  
+  <arg name="world_name" default="playground"/>
+
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/playground.world" if="$(eval world_name=='playground')"/>
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/actor.world" if="$(eval world_name=='actor')"/>
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/willowgarage.world" if="$(eval world_name=='willowgarage')"/>
+  <arg name="world_file_name" default="$(find car_demo)/worlds/mcity.world" if="$(eval world_name=='car_demo')"/>
+  <arg name="world_file_name" default="$(find car_demo)/worlds/sample.world" if="$(eval world_name=='sample')"/>
+  <arg name="world_file_name" default="/usr/local/share/citysim-0/worlds/simple_city.world" if="$(eval world_name=='citysim')"/>
+
+  <include file="$(find turtlebot2_gazebo)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true"/>
+    <arg name="world_name" value="$(arg world_file_name)"/>
+  </include>
+
+</launch>

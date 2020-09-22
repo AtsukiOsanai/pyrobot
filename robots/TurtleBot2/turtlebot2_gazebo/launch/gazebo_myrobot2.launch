@@ -1,0 +1,52 @@
+<launch>  
+  <arg name="base" default="kobuki"/>
+  <arg name="world_name" default="playground"/>
+
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/playground.world" if="$(eval world_name=='playground')"/>
+  <arg name="spawn_model_flag" default="" if="$(eval world_name=='playground')"/>
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/actor.world" if="$(eval world_name=='actor')"/>
+  <arg name="spawn_model_flag" default="" if="$(eval world_name=='actor')"/>
+  <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/willowgarage.world" if="$(eval world_name=='willowgarage')"/>
+  <arg name="spawn_model_flag" default="" if="$(eval world_name=='willowgarage')"/>
+  <arg name="world_file_name" default="$(find car_demo)/worlds/mcity.world" if="$(eval world_name=='car_demo')"/>
+  <arg name="spawn_model_flag" default="-x 0.0 -y -3.0 -z 0.0" if="$(eval world_name=='car_demo')"/>
+  <arg name="world_file_name" default="$(find car_demo)/worlds/sample.world" if="$(eval world_name=='sample')"/>
+  <arg name="spawn_model_flag" default="-x 0.0 -y -240.0 -z 0.0" if="$(eval world_name=='sample')"/>
+  <arg name="world_file_name" default="/usr/local/share/citysim-0/worlds/simple_city.world" if="$(eval world_name=='citysim')"/>
+  <arg name="spawn_model_flag" default="-x 0.0 -y 5.0 -z 0.1" if="$(eval world_name=='citysim')"/>
+
+  <include file="$(find turtlebot2_gazebo)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="base" value="$(arg base)"/>
+    <arg name="verbose" value="true"/>
+    <arg name="world_name" value="$(arg world_file_name)"/>
+  </include>
+
+  <group if="$(eval base =='kobuki')">
+  <!-- kobuki_hexagons_kinect.urdf.xacro -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot2_d455_vlp16.urdf.xacro' --inorder"/>
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+          args="-param robot_description -urdf $(arg spawn_model_flag) -model myrobot2 ">
+    </node>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <!-- Velocity muxer -->
+    <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+    <node pkg="nodelet" type="nodelet" name="cmd_vel_mux"
+          args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+      <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
+      <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
+    </node>
+
+    <!-- Bumper / Cliff to PCD -->
+    <include file="$(find turtlebot_bringup)/launch/includes/kobuki/bumper2pc.launch.xml"/>
+  </group>
+</launch>
