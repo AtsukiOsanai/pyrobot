@@ -16,11 +16,41 @@
 
         $ source path/to/pyrobot_ws/pyenv_pyrobot_python2/bin/activate
 
+## Navigation with hdl_graph_slam and hdl_localization
+### Create a point cloud map
+1. Launch main.launch without a prior map.
+
+        $ roslaunch turtlebot2_control main.launch use_sim:=true use_2dmap:=false robot:=myrobot2 world_name:=sample use_lidar_slam:=true mapping_mode:=true
+
+    options:
+    - robot (str): robot name (turtlebot, myrobot, myrobot2, default: myrobot2)
+    - world_name (str): gazebo world (default: playground)
+    - use_sim (bool): If True, running with Gazebo simulation mode. (default: false)
+    - use_lidar_slam (bool): Employing lidar slam. (default: true)
+    - use_visual_slam (bool): Employing rtabmap visual slam. (default: false)
+    - mapping_mode (bool): If True, the mode to create the map for localization will run.  
+                           False means localization mode and map --> odom /tf will be published by   localization node. (default: false)
+    - use_2dmap (bool): Applying 2d occupancy grid map created from mapping pkg. (default: false)
+    - map_file (str): Path to the map yaml file. (default: turtlebot2_gazebo/maps/playground.yaml)
+
+    You can select playground, actor, willowgarage, car_demo, sample, and citysim.
+
+2. Rviz
+
+        $ roslaunch turtlebot2_rviz view_navigation.launch
+
+3. Teleop or Using 2D Nav Goal in Rviz
+
+        $ roslaunch turtlebot2_control keyboard_teleop.launch
+
+4. TBA
+
+
 ## Navigation with rtabmap_ros
 ### Create a rtabmap database and occupancy grid map.
 1. Launch main.launch without a prior map.
 
-        $ roslaunch turtlebot2_control main.launch use_sim:=true use_map:=false robot:=myrobot world_name:=playground
+        $ roslaunch turtlebot2_control main.launch use_sim:=true use_2dmap:=false robot:=myrobot world_name:=playground
 
     options:
     - robot (str): robot name (turtlebot or myrobot, default: turtlebot)
@@ -28,7 +58,6 @@
     You can select playground, actor, willowgarage, car_demo, and citysim.
 
 2. Rviz
-Please change config to myrobot_navigation.rviz.
 
         $ roslaunch turtlebot2_rviz view_navigation.launch
 

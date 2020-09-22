@@ -1,33 +1,33 @@
 <launch>
     <arg name="use_camera" default="true"/>
-    <arg name="use_orb_slam" default="false"/>
-    <arg name="use_vslam" default="true"/>
     <arg name="use_base" default="true"/>
     <arg name="use_sim" default="false"/>
-    <arg name="use_rviz" default="false"/>
     <arg name="base" default="kobuki"/> <!-- Options: create and kobuki -->
     <arg name="world_name" default="playground"/>
     <arg name="use_safe_controller" default="true"/>
-    <arg name="use_map" default="false"/>
+    <arg name="use_visual_slam" default="false"/>
+    <arg name="use_lidar_slam" default="true"/>
+    <arg name="mapping_mode" default="false"/>
+    <arg name="use_2dmap" default="false"/>
     <arg name="map_file" default="$(find turtlebot2_gazebo)/maps/playground.yaml"/>
-    <arg name="robot" default="turtlebot"/>  <!-- turtlebot or myrobot are allowed.-->
+    <arg name="robot" default="myrobot2"/>  <!-- turtlebot, myrobot or myrobot2 are allowed.-->
 
     <param name="use_camera" value="$(arg use_camera)"/>
-    <!-- <param name="use_vslam" value="$(arg use_orb_slam)"/> -->
-    <param name="use_vslam" value="$(arg use_vslam)"/>
+    <param name="use_visual_slam" value="$(arg use_visual_slam)"/>
+    <param name="use_lidar_slam" value="$(arg use_lidar_slam)"/>
+    <param name="mapping_mode" value="$(arg mapping_mode)"/>
     <param name="use_sim" value="$(arg use_sim)"/>
     <param name="use_base" value="$(arg use_base)"/>
 
-
     <group unless="$(arg use_sim)">
-
+        <!-- TODO: need to fix for actual robot-->
         <group if="$(arg use_camera)">
             <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
                 <arg name="enable_pointcloud" value="false"/>
             </include>
         </group>
 
-        <group if="$(arg use_vslam)">
+        <group if="$(arg use_visual_slam)">
             <group if="$(arg use_camera)">
                   <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch">
                       <arg name="launch_realsense" value="false"/>
@@ -60,9 +60,14 @@
                 <arg name="world_name" value="$(arg world_name)"/>
             </include>
         </group>
-
         <group if="$(eval robot=='myrobot')">
             <include file="$(find turtlebot2_gazebo)/launch/gazebo_myrobot.launch">
+                <arg name="base" value="$(arg base)"/>
+                <arg name="world_name" value="$(arg world_name)"/>
+            </include>
+        </group>
+        <group if="$(eval robot=='myrobot2')">
+            <include file="$(find turtlebot2_gazebo)/launch/gazebo_myrobot2.launch">
                 <arg name="base" value="$(arg base)"/>
                 <arg name="world_name" value="$(arg world_name)"/>
             </include>
@@ -79,12 +84,11 @@
     <!-- Move Base -->
     <group if="$(eval arg('use_base') or arg('use_sim'))" >
         <include file="$(find turtlebot2_navigation)/launch/move_base.launch">
-            <arg name="use_orb_slam" value="$(arg use_orb_slam)"/>
             <arg name="use_safe_controller" value="$(arg use_safe_controller)"/>
             <arg name="base" value="$(arg base)"/>
-            <arg name="map_file" value="$(arg map_file)" if="$(arg use_map)"/>
-            <arg name="map_file" value="$(find turtlebot2_gazebo)/maps/blank_map.yaml" unless="$(arg use_map)"/>
-
+            <arg name="map_file" value="$(arg map_file)" if="$(arg use_2dmap)"/>
+            <arg name="map_file" value="$(find turtlebot2_gazebo)/maps/blank_map.yaml" unless="$(arg use_2dmap)"/>
+            <arg name="mapping_mode" value="$(arg mapping_mode)"/>
         </include>
     </group>
     
