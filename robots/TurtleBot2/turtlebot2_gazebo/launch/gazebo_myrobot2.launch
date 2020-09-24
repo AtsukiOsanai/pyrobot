@@ -1,6 +1,6 @@
 <launch>  
   <arg name="base" default="kobuki"/>
-  <arg name="world_name" default="playground"/>
+  <arg name="world_name" default="sample"/>
 
   <arg name="world_file_name" default="$(find turtlebot2_gazebo)/worlds/playground.world" if="$(eval world_name=='playground')"/>
   <arg name="spawn_model_flag" default="" if="$(eval world_name=='playground')"/>
@@ -11,7 +11,9 @@
   <arg name="world_file_name" default="$(find car_demo)/worlds/mcity.world" if="$(eval world_name=='car_demo')"/>
   <arg name="spawn_model_flag" default="-x 0.0 -y -3.0 -z 0.0" if="$(eval world_name=='car_demo')"/>
   <arg name="world_file_name" default="$(find car_demo)/worlds/sample.world" if="$(eval world_name=='sample')"/>
-  <arg name="spawn_model_flag" default="-x 0.0 -y -240.0 -z 0.0" if="$(eval world_name=='sample')"/>
+  <arg name="spawn_model_flag" default="-x 0.0 -y -235.0 -z 0.0" if="$(eval world_name=='sample')"/>
+  <arg name="world_file_name" default="$(find car_demo)/worlds/sample_dynamic.world" if="$(eval world_name=='sample_dynamic')"/>
+  <arg name="spawn_model_flag" default="-x 0.0 -y -235.0 -z 0.0" if="$(eval world_name=='sample_dynamic')"/>
   <arg name="world_file_name" default="/usr/local/share/citysim-0/worlds/simple_city.world" if="$(eval world_name=='citysim')"/>
   <arg name="spawn_model_flag" default="-x 0.0 -y 5.0 -z 0.1" if="$(eval world_name=='citysim')"/>
 

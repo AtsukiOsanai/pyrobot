@@ -1,22 +1,38 @@
 # TurtleBot2 with more stacked plate Navigation
 
+## Requirements
+- ROS version
+  - melodic (recommended)
+  - kinetic  
+  Some packages can not work.
+- CUDA 10.2 (recommended)
+  - If you don't use ZED camera, you can neglect this dependency.
+
 ## Install
 1. Copy the 'turtlebot2_install_all.sh' from TurtleBot2/install.
 2. Make the workspace for your development (e.g. pyrobot_ws).
 3. Run the install script with args.  
 
-        $ ./turtlebot2_install_all.sh -t full -p 2 -d path/to/pyrobot_ws -l interbotix
+        $ ./turtlebot2_install_all.sh -t full -p 2 -d path/to/pyrobot_ws -l interbotix -z false 
+    options:
+    - t : Install option. Set "full" for sim and actual robot, and "sim_only" for simulation user.
+    - p : Python version. (2 or 3)
+    - d : Path to the install directory.
+    - l : LoCoBot version. Please Set the "interbotix"
+    - z : Use ZED camera or not.  
+          We have two robots, i.e. myrobot and myrobot2.  
+          Basically, we use myrobot2 which does not have ZED camera, so set this option to "false".
 
 4. Load the setup to launch.
 
-        $ cd path/to/pyrobot_ws/low_cost_ws
+        $ cd path/to/pyrobot_ws/low_cost_ws 
         $ source devel/setup.bash
 
 5. Activate virtual env for pyrobot Python API.
 
         $ source path/to/pyrobot_ws/pyenv_pyrobot_python2/bin/activate
 
-## Navigation with hdl_graph_slam and hdl_localization
+## Navigation with hdl_graph_slam and hdl_localization on Gazebo
 ### Create a point cloud map
 1. Launch main.launch without a prior map.
 
@@ -24,29 +40,84 @@
 
     options:
     - robot (str): robot name (turtlebot, myrobot, myrobot2, default: myrobot2)
-    - world_name (str): gazebo world (default: playground)
+    - world_name (str): gazebo world (default: sample)
     - use_sim (bool): If True, running with Gazebo simulation mode. (default: false)
     - use_lidar_slam (bool): Employing lidar slam. (default: true)
     - use_visual_slam (bool): Employing rtabmap visual slam. (default: false)
-    - mapping_mode (bool): If True, the mode to create the map for localization will run.  
+    - mapping_mode (bool): Running the mode to create the map for localization will run.  
                            False means localization mode and map --> odom /tf will be published by   localization node. (default: false)
-    - use_2dmap (bool): Applying 2d occupancy grid map created from mapping pkg. (default: false)
-    - map_file (str): Path to the map yaml file. (default: turtlebot2_gazebo/maps/playground.yaml)
 
-    You can select playground, actor, willowgarage, car_demo, sample, and citysim.
+    You can select playground, actor, willowgarage, car_demo, sample, sample_dynamic, and citysim.
+    If your gazebo does not run up, please try the following command to set the gazebo path.
 
-2. Rviz
+        $ source /usr/local/share/citysim/setup.sh
+
+2. Launch the Rviz.
 
         $ roslaunch turtlebot2_rviz view_navigation.launch
 
-3. Teleop or Using 2D Nav Goal in Rviz
+3. Launch the teleop or Using 2D Nav Goal in Rviz for moving the robot.
 
         $ roslaunch turtlebot2_control keyboard_teleop.launch
 
-4. TBA
+   If you would like to use a joy, let's launch by following command.
+
+        $ roslaunch turtlebot2_control joystick_teleop.launch
+
+4. Launch hdl_graph_slam to create a global 3d map for localization.
+
+        $ roslaunch turtlebot2_navigation hdl_graph_slam_imu.launch
+
+5. Save the global 3d map.
+
+        $ rosservice call /hdl_graph_slam/dump "destination 'path/to/3dmap'"
+        $ rosservice call /hdl_graph_slam/save_map "utm: false resolution: 0.05 destination 'path/to/3dmap.pcd'"
+
+   Please choose an appropriate resolution.
+
+6. (Optional) Refine the 3d map by using the interactive slam package.
+
+        $ roscore
+        , and in another terminal, 
+        $ rosrun interactive_slam interactive_slam
+
+   Regarding the usage, please see the author's [github page](https://github.com/koide3/hdl_localization).
+
+### Navigation with localization
+1. Launch main.launch without a prior map.
+
+        $ roslaunch turtlebot2_control main.launch use_sim:=true use_2dmap:=false robot:=myrobot2 world_name:=sample use_lidar_slam:=true mapping_mode:=false
+
+    options:
+    - robot (str): robot name (turtlebot, myrobot, myrobot2, default: myrobot2)
+    - world_name (str): gazebo world (default: sample)
+    - use_sim (bool): If True, running with Gazebo simulation mode. (default: false)
+    - use_lidar_slam (bool): Employing lidar slam. (default: true)
+    - use_visual_slam (bool): Employing rtabmap visual slam. (default: false)
+    - mapping_mode (bool): If false, running the mode for localization mode.  
+                           "map --> odom" /tf will be published by localization node. (default: false)
+    - use_2dmap (bool): Applying 2d occupancy grid map created from mapping pkg. (default: false)  
+                        NOTE: We have not implemented the script to make a 2d OGM from 3d point cloud map.
+    - map_file (str): Path to the map yaml file. (default: $(find turtlebot2_gazebo)/maps/playground.yaml)  
+                      NOTE: We have not implemented the script to make a 2d OGM from 3d point cloud map.
+
+    You can select playground, actor, willowgarage, car_demo, sample, sample_dynamic, and citysim.
+
+2. Launch the Rviz.
+
+        $ roslaunch turtlebot2_rviz view_navigation.launch
+
+3. Launch the teleop or Using 2D Nav Goal in Rviz for moving the robot.
+
+4. Launch hdl_localization.
+
+        $ roslaunch turtlebot2_navigation hdl_localization_imu.launch 3dmap:=/path/to/3dmap.pcd
+
+    options:
+    - 3dmap (str): Path to the 3d map pcd (default: $(find car_demo)/3dmap/sample_3dmap.pcd)
 
 
-## Navigation with rtabmap_ros
+## Navigation with rtabmap_ros (Not recommended, we don't check the followings yet)
 ### Create a rtabmap database and occupancy grid map.
 1. Launch main.launch without a prior map.
 

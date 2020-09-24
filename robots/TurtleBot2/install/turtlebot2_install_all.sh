@@ -7,22 +7,24 @@ helpFunction()
    echo -e "\t-p Decides the python version for pyRobot. Available Options: 2 or 3"
    echo -e "\t-d Decides where pyrobot to install"
    echo -e "\t-l Decides the type of LoCoBot hardware platform. Available Options: cmu or interbotix"
+   echo -e "\t-z Decides which ZED camera use or not"
    exit 1 # Exit script after printing help
 }
 
-while getopts "t:p:d:l:" opt
+while getopts "t:p:d:l:z" opt
 do
    case "$opt" in
       t ) INSTALL_TYPE="$OPTARG" ;;
       p ) PYTHON_VERSION="$OPTARG" ;;
       d ) INSTALL_DIR="$OPTARG" ;;
       l ) LOCOBOT_PLATFORM="$OPTARG" ;;
+	  z ) USE_ZED="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
 
 # Print helpFunction in case parameters are empty
-if [ -z "$INSTALL_TYPE" ] || [ -z "$PYTHON_VERSION" ] || [ -z "$INSTALL_DIR" ] || [ -z "$LOCOBOT_PLATFORM" ]; then
+if [ -z "$INSTALL_TYPE" ] || [ -z "$PYTHON_VERSION" ] || [ -z "$INSTALL_DIR" ] || [ -z "$LOCOBOT_PLATFORM" ] || [ -z "$USE_ZED" ] ; then
    echo "Some or all of the parameters are empty";
    helpFunction
 fi
@@ -40,6 +42,11 @@ fi
 
 if [ $LOCOBOT_PLATFORM != "cmu" ] && [ $LOCOBOT_PLATFORM != "interbotix" ]; then
 	echo "Invalid LoCoBot hardware platform type";
+   helpFunction
+fi
+
+if [ $USE_ZED != "true" ] && [ $USE_ZED != "false" ]; then
+	echo "Invalid ZED mode";
    helpFunction
 fi
 
@@ -199,13 +206,19 @@ if [ $INSTALL_TYPE == "full" ]; then
 		sudo apt-key adv --keyserver keys.gnupg.net --recv-key C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE
 		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u
 		sudo apt-get update
-		version="2.35.0-0~realsense0.2747"
-		sudo apt-get -y install librealsense2-udev-rules=${version}
-		sudo apt-get -y install librealsense2-dkms=1.3.11-0ubuntu1
-		sudo apt-get -y install librealsense2=${version}
-		sudo apt-get -y install librealsense2-utils=${version}
-		sudo apt-get -y install librealsense2-dev=${version}
-		sudo apt-get -y install librealsense2-dbg=${version}
+		sudo apt-get -y install librealsense2-udev-rules
+		sudo apt-get -y install librealsense2-dkms
+		sudo apt-get -y install librealsense2
+		sudo apt-get -y install librealsense2-utils
+		sudo apt-get -y install librealsense2-dev
+		sudo apt-get -y install librealsense2-dbg
+		# version="2.35.0-0~realsense0.2747"
+		# sudo apt-get -y install librealsense2-udev-rules=${version}
+		# sudo apt-get -y install librealsense2-dkms=1.3.11-0ubuntu1
+		# sudo apt-get -y install librealsense2=${version}
+		# sudo apt-get -y install librealsense2-utils=${version}
+		# sudo apt-get -y install librealsense2-dev=${version}
+		# sudo apt-get -y install librealsense2-dbg=${version}
 	fi
 
 	# STEP 4-1 B: Install realsense2 SDK from source (in a separate catkin workspace)
@@ -223,27 +236,29 @@ if [ $INSTALL_TYPE == "full" ]; then
 	fi
 
 	# STEP 4-2 A: Install ZED SDK (We suppose the cuda-10.2 are installed on Ubuntu.)
-	# TODO: Should we install ZED SDK v3.1.x ?s
-	if [ ! -d "$INSTALL_DIR/zed_sdk" ]; then
-		cd $INSTALL_DIR
-		mkdir zed_sdk && cd zed_sdk
-		if [ $ROS_NAME == "kinetic" ]; then
-			wget https://download.stereolabs.com/zedsdk/3.2/cu102/ubuntu16 -O ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
-			chmod +x ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
-			./ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
-		else
-			wget https://download.stereolabs.com/zedsdk/3.2/cu102/ubuntu18 -O ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
-			chmod +x ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
-			./ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
+	# TODO: Should we install ZED SDK v3.1.x ?
+	if [ $USE_ZED == "true" ]; then
+		if [ ! -d "$INSTALL_DIR/zed_sdk" ]; then
+			cd $INSTALL_DIR
+			mkdir zed_sdk && cd zed_sdk
+			if [ $ROS_NAME == "kinetic" ]; then
+				wget https://download.stereolabs.com/zedsdk/3.2/cu102/ubuntu16 -O ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+				chmod +x ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+				./ZED_SDK_Ubuntu16_cuda10.2_v3.2.0.run
+			else
+				wget https://download.stereolabs.com/zedsdk/3.2/cu102/ubuntu18 -O ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
+				chmod +x ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
+				./ZED_SDK_Ubuntu18_cuda10.2_v3.2.0.run
+			fi
 		fi
-	fi
 
-	# STEP 4-2 B: zed_ros_wrapper
-	if [ ! -d "$CAMERA_FOLDER/src/zed-ros-wrapper" ]; then
-		cd $CAMERA_FOLDER/src/
-		git clone https://github.com/stereolabs/zed-ros-wrapper.git
-		cd zed-ros-wrapper
-		git checkout 636f019fa0334cd22a2cb0dfadda87b37185df70
+		# STEP 4-2 B: zed_ros_wrapper
+		if [ ! -d "$CAMERA_FOLDER/src/zed-ros-wrapper" ]; then
+			cd $CAMERA_FOLDER/src/
+			git clone https://github.com/stereolabs/zed-ros-wrapper.git
+			cd zed-ros-wrapper
+			git checkout 636f019fa0334cd22a2cb0dfadda87b37185df70
+		fi
 	fi
 
 	# STEP 4-3: velodyne
@@ -352,15 +367,18 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cd realsense_gazebo_plugin && git checkout d2b3d56b0f334b82948e817ff9d0648545e007a5 && cd ..
 		# hdl_slam
 		git clone https://github.com/koide3/ndt_omp
-		git clone https://github.com/koide3/hdl_graph_slam
 		git clone https://github.com/koide3/odometry_saver
+		git clone https://github.com/AtsukiOsanai/hdl_graph_slam.git
+		cd hdl_graph_slam && git checkout -b develop origin/develop && cd ..
+		git clone https://github.com/AtsukiOsanai/hdl_localization.git
+		cd hdl_localization && git checkout -b develop origin/develop && cd ..
 		git clone https://github.com/SMRT-AIST/interactive_slam --recursive
-		git clone https://github.com/koide3/hdl_localization.git
 		# Gazebo simulation environment
 		# NOTE: car_demo and citysim requires gazebo 9.
 		git clone https://github.com/AtsukiOsanai/car_demo.git
-		git clone https://github.com/AtsukiOsanai/citysim.git
+		cd car_demo && git checkout -b develop origin/develop && cd ..
 
+		git clone https://github.com/AtsukiOsanai/citysim.git
 		cd citysim && git checkout -b pyrobot origin/pyrobot
 		mkdir build && cd build
 		cmake ..
