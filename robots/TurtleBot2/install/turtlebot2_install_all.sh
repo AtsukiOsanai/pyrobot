@@ -11,14 +11,14 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts "t:p:d:l:z" opt
+while getopts "t:p:d:l:z:" opt
 do
    case "$opt" in
       t ) INSTALL_TYPE="$OPTARG" ;;
       p ) PYTHON_VERSION="$OPTARG" ;;
       d ) INSTALL_DIR="$OPTARG" ;;
       l ) LOCOBOT_PLATFORM="$OPTARG" ;;
-	  z ) USE_ZED="$OPTARG" ;;
+      z ) USE_ZED="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -266,7 +266,7 @@ if [ $INSTALL_TYPE == "full" ]; then
 		cd $CAMERA_FOLDER/src/
 		git clone https://github.com/ros-drivers/velodyne.git
 		cd velodyne
-		git checkout 43c78f25ff5b11240fb184f8b098129ba9ebf1b1
+		git checkout fd07c0aed02a7609361e83d03f06ff3ac8ed9e65
 	fi
 
 	# STEP 4-4: catkin_make
@@ -384,7 +384,7 @@ if [ ! -d "$LOCOBOT_FOLDER/src/pyrobot/robots/TurtleBot2/thirdparty" ]; then
 		cmake ..
 		sudo make install
 		cd /usr/local/share/citysim-0
-		chmod +x setup.sh
+		sudo chmod +x setup.sh
 		echo "source /usr/local/share/citysim-0/setup.sh" >> ~/.bashrc
     fi
 fi

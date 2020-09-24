@@ -5,6 +5,7 @@
   - melodic (recommended)
   - kinetic  
   Some packages can not work.
+- Gazebo 9
 - CUDA 10.2 (recommended)
   - If you don't use ZED camera, you can neglect this dependency.
 
@@ -23,7 +24,7 @@
           We have two robots, i.e. myrobot and myrobot2.  
           Basically, we use myrobot2 which does not have ZED camera, so set this option to "false".
 
-4. Load the setup to launch.
+4. Load the setup.bash
 
         $ cd path/to/pyrobot_ws/low_cost_ws 
         $ source devel/setup.bash
