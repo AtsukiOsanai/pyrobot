@@ -94,6 +94,8 @@
 
    Regarding the usage, please see the author's [github page](https://github.com/koide3/hdl_localization).
 
+6. (Optional) Refine the 3d map by [CloudCompare](https://www.danielgm.net/cc/) and save it as pcd file.
+
 ### Navigation with localization
 1. Launch main.launch without a prior map.
 
@@ -126,6 +128,26 @@
 
     options:
     - 3dmap (str): Path to the 3d map pcd (default: $(find car_demo)/3dmap/sample_3dmap.pcd)
+
+    When the localization does not converge, please set an appropriate initial pose by "2D Pose Estimate" in Rviz.
+
+5. Navigate with PyRobot API
+- We exemplify iPython script to navigate the robot.
+- For more details, see the [pyrobot navigation document](https://www.pyrobot.org/docs/navigation).
+
+    ```bash
+    from pyrobot import Robot
+
+    robot = Robot('turtlebot2')
+
+    # give a relative goal
+    x_rel, y_rel, z_rel = 3.0, 1.0, 0.0
+    robot.base.go_to_relative([x_rel, y_rel, z_rel], close_loop=True, smooth=True, use_map=True)
+
+    # give an absolute goal
+    x_abs, y_abs, z_abs = 10.0, -4.0, 0.0
+    robot.base.go_to_absolute([x_abs, y_abs, z_abs], close_loop=True, smooth=True, use_map=True)
+    ```
 
 
 ## Navigation with rtabmap_ros (Not recommended, we don't check the followings yet)
@@ -199,20 +221,3 @@ Please change config to myrobot_navigation.rviz.
 
 5. Navigate with 2D Nav Goal in Rviz
 Set the goal 6d pose by 2D Nav Goal in Rviz.
-6. Navigate with PyRobot API
-- We exemplify iPython script to navigate the robot.
-- For more details, see the [pyrobot navigation document](https://www.pyrobot.org/docs/navigation).
-
-    ```bash
-    from pyrobot import Robot
-
-    robot = Robot('turtlebot2')
-
-    # give a relative goal
-    x_rel, y_rel, z_rel = 3.0, 1.0, 0.0
-    robot.base.go_to_relative([x_rel, y_rel, z_rel], close_loop=True, smooth=True, use_map=True)
-
-    # give an absolute goal
-    x_abs, y_abs, z_abs = 10.0, -4.0, 0.0
-    robot.base.go_to_absolute([x_abs, y_abs, z_abs], close_loop=True, smooth=True, use_map=True)
-    ```
