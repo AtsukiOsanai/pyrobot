@@ -42,6 +42,16 @@
     options:
     - robot (str): robot name (turtlebot, myrobot, myrobot2, default: myrobot2)
     - world_name (str): gazebo world (default: sample)
+      - World description
+        - playground: [Turtlebot2 playground](http://wiki.ros.org/turtlebot_gazebo/Tutorials/indigo/Make%20a%20map%20and%20navigate%20with%20it)
+        - actor: One people walking around on empty world.
+        - car_demo: [Osrf car_demo world](https://www.osrfoundation.org/simulated-car-demo/)  
+        We removed the prius model from the world for robotic application.
+        - sample: Original world based on car_demo world.
+        - sample_dynamic: The world including dynamic objects (i.e. people and vehicle) based on the sample world.
+        - citysim: Rich city map defined in [link](https://www.osrfoundation.org/simulated-car-demo/).  
+        We removed the prius model from the world for robotic application.  
+        This world is so stuff world that the process will be heavy.
     - use_sim (bool): If True, running with Gazebo simulation mode. (default: false)
     - use_lidar_slam (bool): Employing lidar slam. (default: true)
     - use_visual_slam (bool): Employing rtabmap visual slam. (default: false)
