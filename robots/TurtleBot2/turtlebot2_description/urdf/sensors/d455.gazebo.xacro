@@ -11,21 +11,21 @@
           <image>
             <format>B8G8R8</format>
             <width>1280</width>
-            <height>800</height>
+            <height>720</height>
           </image>
           <clip>
             <near>0.05</near>
             <far>200.0</far>
           </clip>
         </camera>
-        <plugin name="${topics_ns}" filename="libgazebo_ros_openni_kinect.so">
-          <cameraName>${camera_name}</cameraName>
+        <plugin name="${camera_name}" filename="libgazebo_ros_openni_kinect.so">
+          <cameraName>${topics_ns}</cameraName>
           <alwaysOn>true</alwaysOn>
           <updateRate>30</updateRate>
-          <imageTopicName>rgb/image_rect_raw</imageTopicName>
-          <depthImageTopicName>depth/depth_registered</depthImageTopicName>
-          <pointCloudTopicName>point_cloud/cloud_registered</pointCloudTopicName>
-          <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+          <imageTopicName>color/image_rect_color</imageTopicName>
+          <depthImageTopicName>aligned_depth_to_color/image_raw</depthImageTopicName>
+          <pointCloudTopicName>depth_registered/points</pointCloudTopicName>
+          <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
           <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
           <frameName>${color_optical_frame}</frameName>
           <baseline>0.095</baseline>

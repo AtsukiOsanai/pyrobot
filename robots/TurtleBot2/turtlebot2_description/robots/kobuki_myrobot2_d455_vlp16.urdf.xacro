@@ -14,7 +14,7 @@
 
   <kobuki/>
   <xacro:stack_myrobot2 parent="base_link"/>
-  <xacro:sensor_d455 name="d455_top1" topics_ns="d455_top1" parent="plate_top1_front_link">
+  <xacro:sensor_d455 name="d455" topics_ns="d455" parent="plate_top1_front_link">
     <origin xyz="0.0 0 0" rpy="0 0 0"/>
   </xacro:sensor_d455>
   <xacro:VLP-16 parent="plate_top2_center_link" name="velodyne" topic="/velodyne_points" noise="0.008" gpu="true">

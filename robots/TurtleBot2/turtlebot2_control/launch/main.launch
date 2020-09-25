@@ -11,7 +11,8 @@
     <arg name="use_2dmap" default="false"/>
     <arg name="map_file" default="$(find turtlebot2_gazebo)/maps/playground.yaml"/>
     <arg name="robot" default="myrobot2"/>  <!-- turtlebot, myrobot or myrobot2 are allowed.-->
-
+    <arg name="high_resolution_mode" default="false"/>  <!-- Realsense camera will run with high-resolution yet slow fps mode -->
+ 
     <param name="use_camera" value="$(arg use_camera)"/>
     <param name="use_visual_slam" value="$(arg use_visual_slam)"/>
     <param name="use_lidar_slam" value="$(arg use_lidar_slam)"/>
@@ -20,14 +21,31 @@
     <param name="use_base" value="$(arg use_base)"/>
 
     <group unless="$(arg use_sim)">
+        <arg name="height" value="720" if="$(arg high_resolution_mode)"/>
+        <arg name="height" value="480" unless="$(arg high_resolution_mode)"/>
+        <arg name="width" value="1280" if="$(arg high_resolution_mode)"/>
+        <arg name="width" value="640" unless="$(arg high_resolution_mode)"/>
+        <arg name="fps" value="15" if="$(arg high_resolution_mode)"/>
+        <arg name="fps" value="30" unless="$(arg high_resolution_mode)"/>
+
         <!-- TODO: need to fix for actual robot-->
         <group if="$(arg use_camera)">
             <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+                <arg name="camera" value="d455"/>
                 <arg name="enable_pointcloud" value="false"/>
+                <arg name="color_height" value="$(arg height)"/>
+                <arg name="color_width" value="$(arg width)"/>
+                <arg name="color_fps" value="$(arg fps)"/>
+                <arg name="infra_height" value="$(arg height)"/>
+                <arg name="infra_width" value="$(arg width)"/>
+                <arg name="infra_fps" value="$(arg fps)"/>
+                <arg name="depth_height" value="$(arg height)"/>
+                <arg name="depth_width" value="$(arg width)"/>
+                <arg name="depth_fps" value="$(arg fps)"/>
             </include>
         </group>
 
-        <group if="$(arg use_visual_slam)">
+        <!-- <group if="$(arg use_visual_slam)">
             <group if="$(arg use_camera)">
                   <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch">
                       <arg name="launch_realsense" value="false"/>
@@ -36,19 +54,13 @@
             <group unless="$(arg use_camera)">
                   <include file="$(find orb_slam2_ros)/launch/orb_slam2_realsense.launch"/>
             </group>
-        </group>
+        </group> -->
 
         <group if="$(arg use_base)" >
-
-            <include file="$(find base_navigation)/launch/main_base.launch">
+            <include file="$(find turtlebot2_navigation)/launch/main_base.launch">
                 <arg name="base" value="$(arg base)"/>
             </include>
-
         </group>
-
-        <node name="calibration_tf_broadcaster" pkg="turtlebot2_calibration"
-              type="calibration_publish_transforms.py"/>
-
     </group>
 
     <!-- Gazebo -->
@@ -78,7 +90,17 @@
 
     <group unless="$(arg use_sim)">
       <!-- Given the published joint states, publish tf for the robot links -->
-      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+        <group if="$(eval robot=='turtlebot')">
+            <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_hexagons_kinect.urdf.xacro' --inorder"/>
+        </group>
+        <group if="$(eval robot=='myrobot')">
+            <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot_d435_zed.urdf.xacro' --inorder"/>
+        </group>
+        <group if="$(eval robot=='myrobot2')">
+            <param name="robot_description" command="$(find xacro)/xacro '$(find turtlebot2_description)/robots/kobuki_myrobot2_d455_vlp16.urdf.xacro' --inorder"/>
+        </group>
+
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
     </group>
     
     <!-- Move Base -->
