@@ -111,6 +111,8 @@ declare -a package_names=(
 	"libusb-1.0-0-dev"
 	"libgtk-3-dev" 
 	"libglfw3-dev"
+	"libgl1-mesa-dev"
+	"libglu1-mesa-dev"
 	# hdl_slam
 	"libglm-dev"
 	)
@@ -202,24 +204,33 @@ if [ $INSTALL_TYPE == "full" ]; then
 	echo "Installing camera dependencies..."
 
 	# STEP 4-1 A: Install librealsense
-	if [ $(dpkg-query -W -f='${Status}' librealsense2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-		sudo apt-key adv --keyserver keys.gnupg.net --recv-key C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C8B3A55A6F3EFCDE
-		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u
-		sudo apt-get update
-		sudo apt-get -y install librealsense2-udev-rules
-		sudo apt-get -y install librealsense2-dkms
-		sudo apt-get -y install librealsense2
-		sudo apt-get -y install librealsense2-utils
-		sudo apt-get -y install librealsense2-dev
-		sudo apt-get -y install librealsense2-dbg
-		# version="2.35.0-0~realsense0.2747"
-		# sudo apt-get -y install librealsense2-udev-rules=${version}
-		# sudo apt-get -y install librealsense2-dkms=1.3.11-0ubuntu1
-		# sudo apt-get -y install librealsense2=${version}
-		# sudo apt-get -y install librealsense2-utils=${version}
-		# sudo apt-get -y install librealsense2-dev=${version}
-		# sudo apt-get -y install librealsense2-dbg=${version}
-	fi
+	# NOTE: To utilize D455, we have to install the librealsense from source.
+	# Please follow the official instruction. (https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md)
+
+	# if [ $(dpkg-query -W -f='${Status}' librealsense2 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
+	# 	sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+	# 	if [ $ROS_NAME == "kinetic" ]; then
+	# 		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo xenial main" -u
+	# 	else
+	# 		sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo bionic main" -u
+	# 	fi
+	# 	sudo apt-get update
+	# 	sudo apt-get -y install librealsense2-udev-rules
+	# 	sudo apt-get -y install librealsense2-dkms
+	# 	sudo apt-get -y install librealsense2
+	# 	sudo apt-get -y install librealsense2-utils
+	# 	sudo apt-get -y install librealsense2-dev
+	# 	sudo apt-get -y install librealsense2-dbg
+	# fi
+
+	# Sample for my environment
+	# cd $INSTALL_DIR
+	# git clone https://github.com/IntelRealSense/librealsense.git && cd librealsense
+	# ./scripts/setup_udev_rules.sh
+	# ./scripts/patch-realsense-ubuntu-lts.sh
+	# mkdir build && cd build
+	# cmake ../ -DBUILD_EXAMPLES=true -DCMAKE_BUILD_TYPE=Release
+	# sudo make uninstall && make clean && make -j8 && sudo make install
 
 	# STEP 4-1 B: Install realsense2 SDK from source (in a separate catkin workspace)
 	CAMERA_FOLDER=$INSTALL_DIR/camera_ws
@@ -232,7 +243,8 @@ if [ $INSTALL_TYPE == "full" ]; then
 		cd $CAMERA_FOLDER/src/
 		git clone https://github.com/IntelRealSense/realsense-ros.git
 		cd realsense-ros
-		git checkout 98a8c71d707b349249fb01ac1f18a03abda3a9b2
+		git pull --tags
+		git checkout refs/tags/2.2.17
 	fi
 
 	# STEP 4-2 A: Install ZED SDK (We suppose the cuda-10.2 are installed on Ubuntu.)

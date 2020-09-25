@@ -12,7 +12,10 @@
 ## Install
 1. Copy the 'turtlebot2_install_all.sh' from TurtleBot2/install.
 2. Make the workspace for your development (e.g. pyrobot_ws).
-3. Run the install script with args.  
+3. Install the [librealsense](https://github.com/IntelRealSense/librealsense) **from source**.
+    - We found that librealsense pkg obtained from apt-get can not detect D455 camera, thus we have to build this pkg from source.
+    - Please follow the [official installation guide](https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md).
+4. Run the install script with args.  
 
         $ ./turtlebot2_install_all.sh -t full -p 2 -d path/to/pyrobot_ws -l interbotix -z false 
     options:
@@ -24,12 +27,12 @@
           We have two robots, i.e. myrobot and myrobot2.  
           Basically, we use myrobot2 which does not have ZED camera, so set this option to "false".
 
-4. Load the setup.bash
+5. Load the setup.bash
 
         $ cd path/to/pyrobot_ws/low_cost_ws 
         $ source devel/setup.bash
 
-5. Activate virtual env for pyrobot Python API.
+6. Activate virtual env for pyrobot Python API.
 
         $ source path/to/pyrobot_ws/pyenv_pyrobot_python2/bin/activate
 
